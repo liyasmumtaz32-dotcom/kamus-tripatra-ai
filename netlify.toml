@@ -1,0 +1,9 @@
+[functions]
+  # Folder tempat kode serverless functions Anda berada
+  directory = "netlify/functions" 
+  
+# Konfigurasi ini mengalihkan semua permintaan ke /api/* ke fungsi serverless Netlify
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200

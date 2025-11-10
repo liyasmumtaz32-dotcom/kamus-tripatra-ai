@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kamus Tripatra AI</title>
+    <!-- Memuat Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Menggunakan font Inter */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style untuk loader */
+        .loader {
+            border-top-color: #3498db;
+            -webkit-animation: spinner 1.5s linear infinite;
+            animation: spinner 1.5s linear infinite;
+        }
+        @-webkit-keyframes spinner {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <!-- Memuat font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen p-6 antialiased">
+
+    <div class="max-w-3xl mx-auto">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-white flex flex-wrap justify-center gap-1.5" aria-label="Kamus Tripatra AI">
+                <!-- Kamus -->
+                <span class="inline-block py-1 px-2 bg-gray-700 rounded-md shadow-md">K</span>
+                <span class="inline-block py-1 px-2 bg-gray-700 rounded-md shadow-md">A</span>
+                <span class="inline-block py-1 px-2 bg-gray-700 rounded-md shadow-md">M</span>
+                <span class="inline-block py-1 px-2 bg-gray-700 rounded-md shadow-md">U</span>
+                <span class="inline-block py-1 px-2 bg-gray-700 rounded-md shadow-md">S</span>
+                <!-- Tripatra -->
+                <span class="inline-block py-1 px-2 bg-blue-600 rounded-md shadow-md">T</span>
+                <span class="inline-block py-1 px-2 bg-blue-600 rounded-md shadow-md">R</span>
+                <span class="inline-block py-1 px-2 bg-blue-600 rounded-md shadow-md">I</span>
+                <span class="inline-block py-1 px-2 bg-blue-600 rounded-md shadow-md">P</span>
+                <span class="inline-block py-1 px-2 bg-blue-600 rounded-md shadow-md">A</span>
+                <span class="inline-block py-1 px-2 bg-blue-600 rounded-md shadow-md">T</span>
+                <span class="inline-block py-1 px-2 bg-blue-600 rounded-md shadow-md">R</span>
+                <span class="inline-block py-1 px-2 bg-blue-600 rounded-md shadow-md">A</span>
+                <!-- AI -->
+                <span class="inline-block py-1 px-2 bg-gray-700 rounded-md shadow-md">A</span>
+                <span class="inline-block py-1 px-2 bg-gray-700 rounded-md shadow-md">I</span>
+            </h1>
+            <p class="text-gray-400 mt-4">Masukkan kata kunci dan pilih arah untuk menghasilkan entri kamus.</p>
+        </header>
+
+        <!-- Bagian Input -->
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg space-y-4">
+            <div>
+                <label for="directionSelect" class="block text-sm font-medium text-gray-300 mb-2">Pilihan Arah (Bahasa Fokus)</label>
+                <select id="directionSelect" class="w-full bg-gray-700 border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    <option value="A">A: Indonesia → Inggris → Arab (Fokus: Indonesia)</option>
+                    <option value="B">B: Inggris → Arab → Indonesia (Fokus: Inggris)</option>
+                    <option value="C">C: Arab → Inggris → Indonesia (Fokus: Arab)</option>
+                </select>
+            </div>
+            
+            <div>
+                <label id="keywordLabel" for="keywordSelectLatin" class="block text-sm font-medium text-gray-300 mb-2">Pilih Huruf Awal</label>
+                
+                <!-- Dropdown Latin (Default, untuk A & B) -->
+                <select id="keywordSelectLatin" class="w-full bg-gray-700 border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    <!-- Opsi Latin akan diisi oleh JS -->
+                </select>
+
+                <!-- Dropdown Arab (Hidden, untuk C) -->
+                <select id="keywordSelectArabic" class="w-full bg-gray-700 border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition hidden" dir="rtl">
+                    <!-- Opsi Arab akan diisi oleh JS -->
+                </select>
+            </div>
+
+            <!-- Input Jumlah Kata (Angka) -->
+            <div>
+                <label for="wordCountInput" class="block text-sm font-medium text-gray-300 mb-2">Jumlah Entri (1 - 1000)</label>
+                <input type="number" id="wordCountInput" class="w-full bg-gray-700 border-gray-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" value="1" min="1" max="1000">
+            </div>
+
+            <button id="generateButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out flex items-center justify-center">
+                <svg id="button-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <span id="button-text">Buat Entri Kamus</span>
+            </button>
+        </div>
+
+        <!-- Bagian Loader -->
+        <div id="loader" class="hidden text-center my-6">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-600 h-12 w-12 mx-auto"></div>
+            <p class="text-gray-400 mt-2">AI sedang meracik entri kamus...</p>
+        </div>
+
+        <!-- Bagian Error -->
+        <div id="errorArea" class="hidden bg-red-900 border border-red-700 text-red-200 p-4 rounded-lg my-6">
+            <strong>Terjadi Kesalahan:</strong>
+            <p id="errorMessage"></p>
+        </div>
+
+        <!-- Bagian Hasil -->
+        <div id="resultContainer" class="hidden my-6">
+            <h2 class="text-2xl font-semibold mb-4 text-white">Hasil Entri (Markdown Siap Ekspor)</h2>
+            <div class="bg-gray-800 rounded-lg p-1">
+                <!-- Tampilan teks Markdown mentah -->
+                <div id="resultArea" class="text-gray-200 block overflow-x-auto p-4 whitespace-pre-wrap"></div>
+            </div>
+            
+            <div class="flex flex-wrap gap-4 mt-4">
+                <!-- Tombol Salin -->
+                <button id="copyButton" class="bg-gray-600 hover:bg-gray-500 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+                    Salin Teks
+                </button>
+                
+                <!-- Tombol Ekspor Word BARU -->
+                <button id="exportWordButton" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM7 7a1 1 0 000 2h6a1 1 0 100-2H7zM7 11a1 1 0 000 2h6a1 1 0 100-2H7zM3 5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" />
+                    </svg>
+                    Ekspor ke Word (.doc)
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Referensi Elemen DOM
+        const directionSelect = document.getElementById('directionSelect');
+        const keywordSelectLatin = document.getElementById('keywordSelectLatin');
+        const keywordSelectArabic = document.getElementById('keywordSelectArabic');
+        const wordCountInput = document.getElementById('wordCountInput'); 
+        const generateButton = document.getElementById('generateButton');
+        const buttonText = document.getElementById('button-text');
+        const buttonIcon = document.getElementById('button-icon');
+        const loader = document.getElementById('loader');
+        const errorArea = document.getElementById('errorArea');
+        const errorMessage = document.getElementById('errorMessage');
+        const resultContainer = document.getElementById('resultContainer');
+        const resultArea = document.getElementById('resultArea');
+        const copyButton = document.getElementById('copyButton');
+        const exportWordButton = document.getElementById('exportWordButton');
+        
+        copyButton.textContent = 'Salin Teks'; 
+
+        // Endpoint Netlify Function
+        const apiUrl = '/api/generate'; 
+
+        // System Prompt yang akan dikirim ke Serverless Function
+        const systemPrompt = `Anda adalah Leksikografer AI Tiga Bahasa. Tugas Anda adalah menghasilkan **SEBUAH DOKUMEN TERTULIS dalam format MARKDOWN** yang berisi entri kamus lengkap berdasarkan **HURUF AWAL**, **JUMLAH KATA**, dan **ARAH** terjemahan yang diberikan.
+
+PERATURAN UTAMA:
+1.  Output Anda harus berupa Teks MARKDOWN yang bersih, rapi, dan siap disalin/ekspor ke dokumen Word atau alat Markdown lainnya. JANGAN gunakan sintaks JSON.
+2.  Output harus berisi [Jumlah Kata] entri yang dipilih secara acak.
+3.  Setiap entri HARUS diformat sebagai berikut (gunakan sintaks Markdown untuk sub-judul/list, dan pisahkan dengan garis horizontal \`---\`):
+
+\`\`\`markdown
+# [Kata Kunci]
+**Pilihan Arah:** [Arah yang Digunakan]
+**Pelafalan:** [Pelafalan]
+**Kelas Kata:** [Kelas Kata]
+
+## Definisi
+
+**Indonesia:** [Definisi Bahasa Indonesia]
+
+## Terjemahan
+**Inggris:** [Terjemahan Bahasa Inggris]
+**Arab (dengan Harakat):** [Terjemahan Bahasa Arab, pastikan menyertakan harakat lengkap]
+
+## Contoh Kalimat
+* Indonesia: [Kalimat Contoh Indonesia]
+* Inggris: [Kalimat Contoh Inggris]
+* Arab: [Kalimat Contoh Arab]
+
+## Informasi Tambahan
+* **Kata Turunan:** [Kata Turunan]
+* **Etimologi:** [Etimologi]
+
+---
+\`\`\`
+4.  Gunakan Judul tingkat 1 (\`#\`) untuk Kata Kunci, Judul tingkat 2 (\`##\`) untuk bagian Definisi, Terjemahan, dll.
+5.  Hasilkan definisi dan terjemahan yang ringkas namun akurat. Jangan tambahkan penjelasan lain di luar format Markdown di atas.`;
+
+        // Event Listener untuk tombol
+        generateButton.addEventListener('click', handleGenerateClick);
+        copyButton.addEventListener('click', copyToClipboard);
+        directionSelect.addEventListener('change', handleDirectionChange);
+        exportWordButton.addEventListener('click', exportToWord);
+
+        // --- Fungsi untuk Mengisi Dropdown ---
+        function populateLatinAlphabet() {
+            const select = keywordSelectLatin;
+            for (let i = 65; i <= 90; i++) { // A-Z
+                const letter = String.fromCharCode(i);
+                const option = new Option(letter, letter);
+                select.add(option);
+            }
+        }
+
+        function populateArabicAlphabet() {
+            const select = keywordSelectArabic;
+            const hijaiyah = ['أ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي'];
+            hijaiyah.forEach(letter => {
+                const option = new Option(letter, letter);
+                select.add(option);
+            });
+        }
+        
+        // Panggil fungsi populasi saat script dimuat
+        populateLatinAlphabet();
+        populateArabicAlphabet();
+
+        // --- Fungsi untuk Mengganti Dropdown ---
+        function handleDirectionChange() {
+            const direction = directionSelect.value;
+            if (direction === 'A' || direction === 'B') {
+                keywordSelectLatin.classList.remove('hidden');
+                keywordSelectArabic.classList.add('hidden');
+            } else { // direction === 'C'
+                keywordSelectLatin.classList.add('hidden');
+                keywordSelectArabic.classList.remove('hidden');
+            }
+        }
+
+        async function handleGenerateClick() {
+            const direction = directionSelect.value;
+            const directionText = directionSelect.options[directionSelect.selectedIndex].text;
+            
+            // Ambil nilai dari input, konversi ke integer
+            const wordCount = parseInt(wordCountInput.value, 10); 
+
+            let keyword = "";
+            if (direction === 'A' || direction === 'B') {
+                keyword = keywordSelectLatin.value;
+            } else {
+                keyword = keywordSelectArabic.value;
+            }
+
+            if (!keyword) {
+                showError("Silakan pilih huruf awal.");
+                return;
+            }
+            
+            // VALIDASI
+            if (isNaN(wordCount) || wordCount < 1 || wordCount > 1000) {
+                showError("Jumlah Entri harus berupa angka antara 1 hingga 1000.");
+                return;
+            }
+
+            setLoading(true);
+            hideError();
+            resultContainer.classList.add('hidden');
+
+            // Query ke Netlify Function
+            // Kirim semua parameter yang dibutuhkan ke serverless function
+            try {
+                const payload = {
+                    direction: direction,
+                    directionText: directionText,
+                    keyword: keyword,
+                    wordCount: wordCount,
+                    systemPrompt: systemPrompt // Kirim system prompt
+                };
+                
+                // Fetch akan mengembalikan teks Markdown
+                const responseText = await fetchWithRetry(apiUrl, payload);
+                
+                displayResult(responseText);
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                // Menampilkan pesan error yang lebih spesifik untuk Netlify
+                let displayMessage = error.message;
+                if (error.message.includes('404')) {
+                    displayMessage += ". Pastikan Anda telah menginstal dependensi (npm install) dan mengatur GEMINI_API_KEY di Netlify Environment Variables.";
+                }
+                showError(`Gagal memanggil Netlify Function. Detail: ${displayMessage}`);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // Fungsi fetch dengan exponential backoff
+        async function fetchWithRetry(url, payload, retries = 3, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload) // Mengirim payload sebagai JSON
+                    });
+
+                    // Cek status HTTP dari Netlify Function
+                    if (!response.ok) {
+                        let errorDetail = await response.text();
+                        try {
+                            const errorJson = JSON.parse(errorDetail);
+                            errorDetail = errorJson.error || errorDetail;
+                        } catch (e) {
+                            // Biarkan errorDetail sebagai plain text jika gagal parse JSON
+                        }
+                        
+                        throw new Error(`Serverless Function error! Status: ${response.status}. Detail: ${errorDetail}`);
+                    }
+
+                    // Netlify Function mengembalikan plain text (Markdown)
+                    return await response.text(); 
+
+                } catch (error) {
+                    if (i === retries - 1) throw error; // Gagal setelah semua percobaan
+                    // Tidak log error ke konsol untuk retry
+                    await new Promise(res => setTimeout(res, delay));
+                    delay *= 2; // Exponential backoff
+                }
+            }
+        }
+
+        // --- FUNGSI EKSPOR WORD ---
+        function exportToWord() {
+            const content = resultArea.textContent;
+            if (!content) {
+                showError("Tidak ada konten untuk diekspor. Silakan buat entri kamus terlebih dahulu.");
+                return;
+            }
+
+            // PERBAIKAN: Mengganti sintaks Markdown ke format HTML dasar agar lebih mudah diolah Word
+            let htmlContent = content;
+            htmlContent = htmlContent.replace(/^# (.*)$/gm, '<h1>$1</h1>'); // H1 untuk Kata Kunci
+            htmlContent = htmlContent.replace(/^## (.*)$/gm, '<h2>$1</h2>'); // H2 untuk Sub Judul
+            htmlContent = htmlContent.replace(/\*\*(.*)\*\*/g, '<b>$1</b>'); // Bold
+            htmlContent = htmlContent.replace(/^-{3}$/gm, '<hr style="margin-top: 20px; margin-bottom: 20px;">'); // Garis horizontal
+
+            // Konversi list Markdown ke HTML <ul>
+            const lines = htmlContent.split('\n');
+            let inList = false;
+            let finalHtml = '';
+
+            lines.forEach(line => {
+                if (line.trim().startsWith('* ')) {
+                    if (!inList) {
+                        finalHtml += '<ul>\n';
+                        inList = true;
+                    }
+                    finalHtml += `<li>${line.trim().substring(2)}</li>\n`;
+                } else {
+                    if (inList) {
+                        finalHtml += '</ul>\n';
+                        inList = false;
+                    }
+                    finalHtml += line + '\n';
+                }
+            });
+            if (inList) {
+                finalHtml += '</ul>\n';
+            }
+
+
+            const fileName = `Kamus_Tripatra_${new Date().toISOString().slice(0, 10)}.doc`;
+            
+            // Template HTML untuk file .doc (MIME type application/msword)
+            const docContent = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset='utf-8'></head>
+                <body>
+                    ${finalHtml.replace(/\n/g, '<br>')}
+                </body>
+                </html>
+            `;
+
+            // Membuat Blob dan memicu unduhan
+            const blob = new Blob([docContent], { type: 'application/msword;charset=utf-8' });
+            
+            // Menggunakan URL.createObjectURL dan tag <a> untuk memicu unduhan
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+
+            // Tanda visual bahwa ekspor berhasil
+            exportWordButton.textContent = 'Berhasil Diekspor!';
+            setTimeout(() => {
+                exportWordButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM7 7a1 1 0 000 2h6a1 1 0 100-2H7zM7 11a1 1 0 000 2h6a1 1 0 100-2H7zM3 5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" /></svg>Ekspor ke Word (.doc)`;
+            }, 2000);
+        }
+
+        // Fungsi UI
+        function setLoading(isLoading) {
+            if (isLoading) {
+                loader.classList.remove('hidden');
+                generateButton.disabled = true;
+                buttonText.textContent = 'Memproses...';
+                buttonIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />`;
+            } else {
+                loader.classList.add('hidden');
+                generateButton.disabled = false;
+                buttonText.textContent = 'Buat Entri Kamus';
+                buttonIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />`;
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorArea.classList.remove('hidden');
+        }
+
+        function hideError() {
+            errorArea.classList.add('hidden');
+        }
+
+        function displayResult(markdownText) {
+            // Tampilkan teks Markdown mentah agar mudah disalin
+            resultArea.textContent = markdownText;
+            resultContainer.classList.remove('hidden');
+            copyButton.textContent = 'Salin Teks'; // Reset button text
+        }
+
+        function copyToClipboard() {
+            // Menggunakan document.execCommand untuk kompatibilitas iframe
+            const textToCopy = resultArea.textContent;
+            const textarea = document.createElement('textarea');
+            textarea.value = textToCopy;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                copyButton.textContent = 'Berhasil Disalin!';
+                setTimeout(() => {
+                    copyButton.textContent = 'Salin Teks';
+                }, 2000);
+            } catch (err) {
+                console.error('Gagal menyalin:', err);
+                copyButton.textContent = 'Gagal Menyalin';
+                 setTimeout(() => {
+                    copyButton.textContent = 'Salin Teks';
+                }, 2000);
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // Panggil handler perubahan arah saat pemuatan pertama untuk mengatur dropdown yang benar
+        handleDirectionChange(); 
+
+    </script>
+
+</body>
+</html>

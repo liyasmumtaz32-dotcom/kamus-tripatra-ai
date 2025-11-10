@@ -1,0 +1,19 @@
+{
+  "name": "netlify-gemini-dictionary-function",
+  "version": "1.0.0",
+  "description": "Serverless function to securely call the Gemini API for dictionary generation.",
+  "main": "netlify/functions/generate.js",
+  "dependencies": {
+    "@google/genai": "^0.1.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "gemini",
+    "netlify",
+    "serverless"
+  ],
+  "author": "",
+  "license": "ISC"
+}
